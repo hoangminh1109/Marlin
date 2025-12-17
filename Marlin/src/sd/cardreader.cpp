@@ -1151,7 +1151,8 @@ void CardReader::cdroot() {
 
         // Init sort order.
         for (int16_t i = 0; i < fileCnt; i++) {
-          sort_order[i] = i;
+          // sort_order[i] = i;
+          sort_order[i] = (SDSORT_SORT_RECENT) ? fileCnt - i - 1: i;
           // If using RAM then read all filenames now.
           #if ENABLED(SDSORT_USES_RAM)
             selectFileByIndex(i);
@@ -1169,6 +1170,7 @@ void CardReader::cdroot() {
         }
 
         // Bubble Sort
+        #if DISABLED(SDSORT_SORT_RECENT)
         for (int16_t i = fileCnt; --i;) {
           bool didSwap = false;
           int16_t o1 = sort_order[0];
@@ -1236,6 +1238,7 @@ void CardReader::cdroot() {
           }
           if (!didSwap) break;
         }
+        #endif // SDSORT_SORT_RECENT
         // Using RAM but not keeping names around
         #if ENABLED(SDSORT_USES_RAM) && DISABLED(SDSORT_CACHE_NAMES)
           #if ENABLED(SDSORT_DYNAMIC_RAM)
